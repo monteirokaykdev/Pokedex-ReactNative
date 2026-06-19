@@ -291,8 +291,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   image: {
-    width: 200,
-    height: 200,
+    width: "55%",
+    height: "55%",
     alignSelf: "center",
     marginTop: 60,
     zIndex: 1,
