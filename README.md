@@ -28,24 +28,20 @@ Uma Pokédex desenvolvida com **React Native**, **Expo** e **TypeScript**, consu
 ## 📸 Screenshots
 
 ### Tela Inicial
-
-![Tela Inicial](docs/Screenshot 2026-06-18 223836.png)
+![Screenshot 2026-06-18 223836](docs/home.png)
 
 ### Informações Gerais
-
-![About](docs/Screenshot 2026-06-18 223836.png)
+![Screenshot 2026-06-18 223845](docs/about.png)
 
 ### Estatísticas
-
-![Stats](docs/Screenshot 2026-06-18 223850.png)
+![Screenshot 2026-06-18 223850](docs/base.png)
 
 ### Evoluções
-
-![Evolution](docs/Screenshot 2026-06-18 223855.png)
+![Screenshot 2026-06-18 223855](docs/evo.png)
 
 ### Golpes
+![Screenshot 2026-06-18 223900](docs/moves.png)
 
-![Moves](docs/Screenshot 2026-06-18 223900.png)
 
 ---
 
@@ -95,23 +91,6 @@ Este projeto consome dados da:
 * 🎵 Sons e animações
 
 ---
-
-## 📸 Screenshots
-
-### Tela Inicial
-![Screenshot 2026-06-18 223836](docs/home.png)
-
-### Informações Gerais
-![Screenshot 2026-06-18 223845](docs/about.png)
-
-### Estatísticas
-![Screenshot 2026-06-18 223850](docs/base.png)
-
-### Evoluções
-![Screenshot 2026-06-18 223855](docs/evo.png)
-
-### Golpes
-![Screenshot 2026-06-18 223900](docs/moves.png)
 
 ## 👨‍💻 Autor
 
