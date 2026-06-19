@@ -1,3 +1,10 @@
+Integrantes do Grupo:
+Kayk monteiro
+Matheus Cogliatti
+Maxwell dos Santos
+Esterleane
+Paola Fiel
+
 # 📱 Pokédex React Native
 
 Uma Pokédex desenvolvida com **React Native**, **Expo** e **TypeScript**, consumindo dados da **PokéAPI**. O aplicativo permite navegar pelos Pokémon da primeira geração, visualizar informações detalhadas, estatísticas, evoluções e golpes de cada criatura.
