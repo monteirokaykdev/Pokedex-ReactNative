@@ -1,4 +1,4 @@
-import { Button, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import pokeApi from '../../services/pokeAPI';
 import { Image } from 'react-native';
@@ -6,7 +6,51 @@ import { useFonts } from 'expo-font';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TextInput } from 'react-native-gesture-handler';
 import { createAudioPlayer} from 'expo-audio';
+import { Ionicons } from "@expo/vector-icons";
 
+//Type Icons
+import Normal from "../../../assets/icons/normal.svg";
+import Fire from "../../../assets/icons/fire.svg";
+import Water from "../../../assets/icons/water.svg";
+import Electric from "../../../assets/icons/electric.svg";
+import Grass from "../../../assets/icons/grass.svg";
+import Ice from "../../../assets/icons/ice.svg";
+import Fighting from "../../../assets/icons/fighting.svg";
+import Poison from "../../../assets/icons/poison.svg";
+import Ground from "../../../assets/icons/ground.svg";
+import Flying from "../../../assets/icons/flying.svg";
+import Psychic from "../../../assets/icons/psychic.svg";
+import Bug from "../../../assets/icons/bug.svg";
+import Rock from "../../../assets/icons/rock.svg";
+import Ghost from "../../../assets/icons/ghost.svg";
+import Dragon from "../../../assets/icons/dragon.svg";
+import Dark from "../../../assets/icons/dark.svg";
+import Steel from "../../../assets/icons/steel.svg";
+import Fairy from "../../../assets/icons/fairy.svg";
+
+//Animacao Shimmer
+import PokemonCardSkeleton from "../../animations/PokemonCardSkeleton";
+
+const typeIcons: Record<string, React.FC<any>> = {
+  normal: Normal,
+  fire: Fire,
+  water: Water,
+  electric: Electric,
+  grass: Grass,
+  ice: Ice,
+  fighting: Fighting,
+  poison: Poison,
+  ground: Ground,
+  flying: Flying,
+  psychic: Psychic,
+  bug: Bug,
+  rock: Rock,
+  ghost: Ghost,
+  dragon: Dragon,
+  dark: Dark,
+  steel: Steel,
+  fairy: Fairy,
+};
 
 
 type PokemonItem = {
@@ -33,6 +77,7 @@ export default function Pokemon({navigation}:any) {
     const [fontsLoaded] = useFonts({
     PokemonFont: require('../../../assets/Poppins-Bold.ttf'),
     Fredoka: require('../../../assets/Fredoka-Medium.ttf'),
+    PokemonFontLight: require('../../../assets/Poppins-Regular.ttf'),
     });
 
     const handleSearch = (query: string) => {
@@ -55,10 +100,20 @@ export default function Pokemon({navigation}:any) {
             setLoading(true);
             setPokemons([]);
 
-            const resp = await pokeApi.get(`/generation/${gen}`);
+
+        const resp =
+            gen === 10
+                ? await pokeApi.get("/pokemon?limit=1025")
+                : await pokeApi.get(`/generation/${gen}`);
+
+        const listaPokemon =
+            gen === 10
+                ? resp.data.results
+                : resp.data.pokemon_species;
+
 
             const respTipos = await Promise.all(
-                resp.data.pokemon_species.map(async (pokemon: PokemonItem) => {
+                listaPokemon.map(async (pokemon: PokemonItem) => {
                     const id = getPokemonId(pokemon.url);
 
                     const req = await pokeApi.get(`/pokemon/${id}`);
@@ -141,7 +196,7 @@ export default function Pokemon({navigation}:any) {
 
 
     if (!fontsLoaded) {
-        return <Text>Carregando fonte...</Text>;
+        return <Text style={styles.loadingText}>Carregando fonte...</Text>;
     }
 
     function getPokemonId(url: string) {
@@ -149,11 +204,11 @@ export default function Pokemon({navigation}:any) {
     }
 
     function proximaGeracao() {
-        setGen((prev) => (prev >= 9 ? 1 : prev + 1));
+        setGen((prev) => (prev >= 10 ? 1 : prev + 1));
     }
 
     function ultimaGeracao() {
-        setGen((prev) => (prev <= 1 ? 9 : prev - 1));
+        setGen((prev) => (prev <= 1 ? 10 : prev - 1));
     }
 
 
@@ -168,20 +223,28 @@ export default function Pokemon({navigation}:any) {
 
     return (
         <View style={styles.container}>
+            <View style={styles.headerBox}>
             <SafeAreaView style={styles.SearchBar}>
 
                 <TextInput 
-                placeholder='Search'
+                placeholder='Example : "Pinsir"'
                 clearButtonMode='always' 
                 autoCapitalize='words' 
                 value={searchQuery} 
                 onChangeText={(query) => handleSearch(query)} style={styles.SearchBarBox}></TextInput>
             </SafeAreaView>
+            </View>
 
 
-            {loading ? (
-                <Text>Carregando Pokémons...</Text>
-            ) : (
+
+                {loading ? (
+                <FlatList
+                    data={Array.from({ length: 8 })}
+                    keyExtractor={(_, index) => String(index)}
+                    renderItem={() => <PokemonCardSkeleton />}
+                    showsVerticalScrollIndicator={false}
+                />
+                ) : (
                 <FlatList
                     data={pokemonsFiltrados}
                     keyExtractor={(item) => item.name}
@@ -218,21 +281,38 @@ export default function Pokemon({navigation}:any) {
                                 <View style={styles.info}>
 
                                     <View style={styles.typeContainer}>
-                                        {item.types.map((type) => (
-                                            <View key={type} style={[styles.typeCard, {
-                                                backgroundColor : typeColorsStrong[type],
-                                            },
-                                            ]}>
-                                                <Text>
+                                            {item.types.map((type: string) => {
+                                            const Icon = typeIcons[type];
+                                            return (
+                                                <View
+                                                key={type}
+                                                style={[
+                                                    styles.typeCard,
+                                                    {
+                                                    backgroundColor: typeColorsStrong[type],
+                                                    },
+                                                ]}
+                                                >
+                                                {Icon && (
+                                                    <Icon
+                                                    width={14}
+                                                    height={14}
+                                                    style={{ marginTop: -3 }}
+                                                    />
+                                                )}
+
+                                                <Text style={styles.typeText}>
                                                     {capitalize(type)}
                                                 </Text>
-                                            </View>
-                                        ))}
+                                                </View>
+                                            );
+                                        })}
                                     </View>
+                                    
 
                                 
 
-                                <Pressable style={styles.imageBox} onPress={() => tocarCry(id)}>
+                                    <Pressable style={styles.imageBox} onPress={() => tocarCry(id)}>
                                         <View style={styles.semiCircle}></View>
                                         <View style={styles.pokeballContainer}>
 
@@ -241,17 +321,16 @@ export default function Pokemon({navigation}:any) {
                                                 source={require('../../../assets/pokeball-removebg-preview.png')}
                                                 style={styles.pokeballBg}
                                             />
-
-                                            <Image
-                                                resizeMode = "contain" 
+                                                <Image
+                                                resizeMode="contain"
                                                 source={{
-                                                    uri:`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${id}.gif`
+                                                    uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${item.id}.png`
                                                 }}
                                                 style={styles.image}
-                                        />
+                                                />
                                         </View>
 
-                                </Pressable>
+                                    </Pressable>
                                 </View>
                             </Pressable>
                         );
@@ -267,7 +346,7 @@ export default function Pokemon({navigation}:any) {
                 </Pressable>
 
                 <Text style={styles.genText}>
-                    Gen {gen}
+                    {gen === 10 ? "Todas" : `Gen ${gen}`}
                 </Text>
 
                 <Pressable
@@ -337,17 +416,18 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 16,
     backgroundColor: "#FFFFFF",
-    borderWidth: 0,
+    borderWidth: 1,
     fontSize: 15,
     shadowColor: "#000",
     shadowOpacity: 0.08,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 3 },
-    elevation: 3,
+    elevation: 6,
   },
 
   SearchBar: {
-    marginHorizontal: 5,
+    marginHorizontal: 0,
+    width: "100%",
   },
 
   row: {
@@ -372,7 +452,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Fredoka',
     fontSize: 22,
     marginBottom: 6,
-    color: '#1F2937',
+    color: '#ffffff',
   },
 
   info: {
@@ -390,12 +470,14 @@ const styles = StyleSheet.create({
   },
 
   typeCard: {
-    minWidth: 80,
+    minWidth: 90,
     borderRadius: 999,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 10,
     paddingVertical: 4,
+    gap: 3,
+    flexDirection: 'row',
   },
 
   imageBox: {
@@ -407,8 +489,8 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    width: "100%",
-    height: 80,
+    width: "140%",
+    height: "140%",
     zIndex : 1,
   },
 
@@ -460,13 +542,29 @@ genButton: {
   elevation: 4,
 },
   genButtonText: {
+    fontFamily:"PokemonFont",
     fontSize: 14,
     fontWeight: "bold",
   },
 
 genText: {
+    fontFamily:"PokemonFont",
     fontSize: 14,
     fontWeight: "bold",
   },
+  loadingText:{
+    fontFamily:"PokemonFont",
+    flex: 1,
+    textAlign: 'center',
+    marginTop: "80%",
+  },
+  headerBox:{
+    flexDirection: 'row',
+  },
+  typeText:{
+    fontFamily:"PokemonFont",
+    color: "#FFF",
+  }
+
 
 });

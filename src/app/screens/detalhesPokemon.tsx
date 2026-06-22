@@ -1,8 +1,32 @@
-import { View, Text, Pressable, Image, FlatList } from "react-native";
+import { View, Text, Pressable, Image, FlatList , Dimensions } from "react-native";
 import { StyleSheet } from "react-native";
 import {useNavigation} from '@react-navigation/native'
 import React, { useState } from "react";
 import StatBarFunction from "../../components/statBar";
+import shinyIcon from "../../../assets/shiny.png";
+
+//Type Icons
+import Normal from "../../../assets/icons/normal.svg";
+import Fire from "../../../assets/icons/fire.svg";
+import Water from "../../../assets/icons/water.svg";
+import Electric from "../../../assets/icons/electric.svg";
+import Grass from "../../../assets/icons/grass.svg";
+import Ice from "../../../assets/icons/ice.svg";
+import Fighting from "../../../assets/icons/fighting.svg";
+import Poison from "../../../assets/icons/poison.svg";
+import Ground from "../../../assets/icons/ground.svg";
+import Flying from "../../../assets/icons/flying.svg";
+import Psychic from "../../../assets/icons/psychic.svg";
+import Bug from "../../../assets/icons/bug.svg";
+import Rock from "../../../assets/icons/rock.svg";
+import Ghost from "../../../assets/icons/ghost.svg";
+import Dragon from "../../../assets/icons/dragon.svg";
+import Dark from "../../../assets/icons/dark.svg";
+import Steel from "../../../assets/icons/steel.svg";
+import Fairy from "../../../assets/icons/fairy.svg";
+
+const { width, height } = Dimensions.get("window");
+
 
 
 export default function PokemonDetalhes({route} : any){
@@ -22,6 +46,7 @@ export default function PokemonDetalhes({route} : any){
     const malePercentage = 100 - femalePercentage
 
     const [abaAtiva, setAbaAtiva] = useState("About");
+    const [isShiny, setShiny] = useState(false);
 
     const navigation = useNavigation();
 
@@ -35,16 +60,6 @@ export default function PokemonDetalhes({route} : any){
                 backgroundColor : typeColors[pokemonType[0]],
             }]}>
 
-
-                <Pressable 
-                style ={styles.backButton} 
-                onPress ={() => navigation.goBack()}
-                >
-    
-                <Text style={styles.backText}>←</Text>
-
-                </Pressable>
-
                 <View style={styles.headerInfo}>
 
                  <View>
@@ -53,21 +68,34 @@ export default function PokemonDetalhes({route} : any){
                     </Text>
 
                     <View style={styles.typeContainer}>
-                        {pokemonType.map((type : string) => (
-                            <View 
-                            key ={type}
-                            style={[styles.typeCard,{
-                                backgroundColor: typeColorsStrong[type] || "#fff",
-                            }]}
-                            >
-                                <Text style = {styles.typeText}>{capitalize(type)}</Text>
-                            </View>
+                            {pokemonType.map((type: string) => {
+                            const Icon = typeIcons[type];
+                            return (
+                                <View
+                                key={type}
+                                style={[
+                                    styles.typeCard,
+                                    {
+                                    backgroundColor: typeColorsStrong[type],
+                                    },
+                                ]}
+                                >
+                                {Icon && (
+                                    <Icon
+                                    width={14}
+                                    height={14}
+                                    style={{ marginTop: -2 }}
+                                    />
+                                )}
 
-                        ))}
+                                <Text style={styles.typeText}>
+                                    {capitalize(type)}
+                                </Text>
+                                </View>
+                            );
+                        })}
                     </View>
                     </View>
-
-
 
                   <View>
                     <Text style={styles.pokemonId}>
@@ -78,13 +106,27 @@ export default function PokemonDetalhes({route} : any){
                     <Image
                     resizeMode = "contain" 
                     source={{
-                        uri : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${pokemonId}.gif`
+                        uri: isShiny
+                        ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokemonId}.png` 
+                        : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`
+
                     }} style={styles.image} />
                     
             </View>
 
 
             <View style={styles.bottomHalf}>
+                <View>
+                    <Pressable
+                    style={styles.shinyCheckContainer}
+                    onPress={() => setShiny(prev => !prev)}
+                    >
+                    <Image style = {styles.shinyIcon}
+                    resizeMode ="contain"
+                    source= {shinyIcon}
+                    />
+                    </Pressable>
+                </View>
                 <View style={styles.tabs}>
                     {["About", "Base Stats", "Evolution", "Moves"].map((tab) => (
                         <Pressable key ={tab} onPress={() => setAbaAtiva(tab)}>
@@ -214,6 +256,27 @@ export default function PokemonDetalhes({route} : any){
     );
 };
 
+const typeIcons: Record<string, React.FC<any>> = {
+  normal: Normal,
+  fire: Fire,
+  water: Water,
+  electric: Electric,
+  grass: Grass,
+  ice: Ice,
+  fighting: Fighting,
+  poison: Poison,
+  ground: Ground,
+  flying: Flying,
+  psychic: Psychic,
+  bug: Bug,
+  rock: Rock,
+  ghost: Ghost,
+  dragon: Dragon,
+  dark: Dark,
+  steel: Steel,
+  fairy: Fairy,
+};
+
 const typeColors: Record<string, string> = {
   normal: "#C6C6A7",
   fire: "#d64d4d",
@@ -258,76 +321,42 @@ const typeColorsStrong: Record<string, string> = {
 };
 
 
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f8f8',
-    flexDirection: "column"
+    backgroundColor: "#f8f8f8",
   },
-  upperHalf:{
-    flex: 0.9,
-    backgroundColor: '#7cf164',
-    padding: 20,
+
+  upperHalf: {
+    flex: 0.8,
+    padding: width * 0.025,
   },
-  bottomHalf:{
+
+  bottomHalf: {
     flex: 1.2,
-    backgroundColor: '#ffffff',
-    padding: 20,
+    backgroundColor: "#ffffff",
+    paddingHorizontal: width * 0.05,
+    paddingTop: height * 0.035,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     marginTop: -30,
   },
+
   backButton: {
-    width: 56,
-    height: 56,
+    width: width * 0.14,
+    height: width * 0.14,
     justifyContent: "center",
     alignItems: "flex-start",
     zIndex: 10,
   },
 
   backText: {
-    fontSize: 40,
-    color: '#1F2937',
-    fontWeight: "bold",
-  },
-  image: {
-    width: "55%",
-    height: "55%",
-    alignSelf: "center",
-    marginTop: 60,
-    zIndex: 1,
-  },
-  typeCard: {
-    minWidth: 80,
-    borderRadius: 999,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    paddingHorizontal: 20,
-    paddingVertical: 4,
-  },
-
-  typeText:{
-    fontFamily: 'Fredoka',
-  },
-
-  typeContainer: {
-    flexDirection: "row",
-    gap: 6,
-    marginTop: 6,
-  },
-
-  pokemonName: {
-    fontFamily: 'Fredoka',
-    fontSize: 35,
-    marginBottom: 6,
-    color: '#1F2937',
-  },
-  
-  pokemonId: {
-    fontSize: 30,
+    fontFamily: "PokemonFont",
+    fontSize: width * 0.1,
     color: "#1F2937",
-    marginTop: 18,
-    fontFamily: 'Fredoka',
+    fontWeight: "bold",
   },
 
   headerInfo: {
@@ -335,17 +364,94 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-start",
   },
+
+  pokemonName: {
+    fontFamily: "Fredoka",
+    fontSize: width * 0.085,
+    marginBottom: 6,
+    color: "#ffffff",
+    marginTop: 10,
+  },
+
+  pokemonId: {
+    fontFamily: "Fredoka",
+    fontSize: width * 0.07,
+    color: "#ffffff",
+    marginTop: height * 0.02,
+  },
+
+  typeContainer: {
+    flexDirection: "row",
+    gap: 6,
+    marginTop: 6,
+    flexWrap: "wrap",
+  },
+
+  typeCard: {
+    minWidth: width * 0.2,
+    borderRadius: 999,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: width * 0.04,
+    paddingVertical: height * 0.005,
+    flexDirection: 'row',
+    gap: 6,
+  },
+
+  typeText: {
+    fontFamily: "PokemonFontLight",
+    fontSize: width * 0.040,
+    color: "#FFF",
+  },
+
+  image: {
+    width: width * 0.45,
+    height: height * 0.22,
+    alignSelf: "center",
+    marginTop: height * 0.025,
+    zIndex: 1,
+  },
+
+  shinyCheckContainer: {
+    position: "absolute",
+    width: width * 0.13,
+    height: width * 0.13,
+    borderRadius: (width * 0.13) / 2,
+    top: -(width * 0.17) / 1.2,
+    alignSelf: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFF",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 10,
+    zIndex: 10,
+  },
+
+  shinyIcon: {
+    width: "80%",
+    height: "80%",
+  },
+
   tabs: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 28,
-    padding: 20,
+    marginBottom: height * 0.02,
+    paddingHorizontal: width * 0.02,
+    paddingTop: height * 0.015,
   },
 
   tabText: {
-    fontSize: 15,
+    fontFamily: "PokemonFont",
+    fontSize: width * 0.035,
     color: "#aaa",
-    paddingBottom: 8,
+    paddingTop: height * 0.012,
+    paddingBottom: height * 0.018,
   },
 
   tabTextActive: {
@@ -354,78 +460,84 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "#3155ff",
   },
+
   aboutTab: {
     width: "100%",
     height: "80%",
-    gap:12,
+    gap: height * 0.012,
   },
 
-  aboutTabRow:{
+  aboutTabRow: {
     flex: 1,
-    flexDirection:'row',
-    gap: 20,
+    flexDirection: "row",
+    gap: width * 0.05,
   },
 
-  label:{
-    fontFamily: 'PokemonFont',
-    fontSize: 18,
-    color: "#797575",
-    width : 100,
-  },
-   value :{
-    fontFamily: 'PokemonFont',
-    fontSize: 18,
-  },
-  StatBar: {
-    flex : 1,
-    paddingHorizontal: 5,
-  },
-evoChain: {
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "center",
-  marginTop: 100,
-  paddingHorizontal: 10,
-},
-
-evoCard: {
-  alignItems: "center",
-  justifyContent: "center",
-  width: 95,
-},
-
-evoImg: {
-  width: 90,
-  height: 90,
-},
-
-evoName: {
-  marginTop: 8,
-  fontFamily: "PokemonFont",
-  fontSize: 12,
-  color: "#333",
-  textAlign: "center",
-},
-
-arrow: {
-  fontSize: 24,
-  color: "#999",
-  marginHorizontal: 4,
-},
-movesList: {
-    flex: 1,
-},
-
-moveCard: {
-    backgroundColor: "#F3F4F6",
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 8,
-},
-
-moveText: {
-    color: "#1F2937",
-    fontSize: 14,
+  label: {
     fontFamily: "PokemonFont",
-},
+    fontSize: width * 0.042,
+    color: "#797575",
+    width: width * 0.28,
+  },
+
+  value: {
+    fontFamily: "PokemonFont",
+    fontSize: width * 0.042,
+    flex: 1,
+  },
+
+  StatBar: {
+    flex: 1,
+    paddingHorizontal: width * 0.01,
+  },
+
+  evoChain: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: height * 0.1,
+    paddingHorizontal: width * 0.02,
+  },
+
+  evoCard: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: width * 0.23,
+  },
+
+  evoImg: {
+    width: width * 0.22,
+    height: width * 0.22,
+  },
+
+  evoName: {
+    marginTop: height * 0.01,
+    fontFamily: "PokemonFont",
+    fontSize: width * 0.03,
+    color: "#333",
+    textAlign: "center",
+  },
+
+  arrow: {
+    fontSize: width * 0.06,
+    color: "#999",
+    marginHorizontal: width * 0.01,
+  },
+
+  movesList: {
+    flex: 1,
+  },
+
+  moveCard: {
+    backgroundColor: "#F3F4F6",
+    padding: width * 0.03,
+    borderRadius: 12,
+    marginBottom: height * 0.01,
+  },
+
+  moveText: {
+    color: "#1F2937",
+    fontSize: width * 0.035,
+    fontFamily: "PokemonFont",
+  },
 });

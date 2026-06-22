@@ -1,3 +1,4 @@
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 type StatBar = {
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
   },
 
   barBackground: {
-    width: "75%",
+    width: "50%",
     height: 8,
     backgroundColor: "#e5e7eb",
     borderRadius: 999,
